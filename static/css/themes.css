@@ -1,0 +1,161 @@
+/*
+   MOTOR DE TEMAS
+   --------------------------------------------------------------------------
+   Cada paleta fornece oito posições, mesmo quando a paleta original possui
+   quatro cores (nesses casos repetimos valores). style.css não conhece códigos
+   hexadecimais: ele usa apenas nomes como --ui-background e --ui-accent.
+
+   Para adicionar um tema:
+   1. crie um bloco :root[data-theme="nome"], .theme-nome;
+   2. preencha --palette-1 até --palette-8;
+   3. adicione a opção correspondente em templates/base.html.
+*/
+
+/* Tema padrão. A classe também gera a miniatura no seletor de temas. */
+:root,
+.theme-ammo-8 {
+    --palette-1: #040c06;
+    --palette-2: #112318;
+    --palette-3: #1e3a29;
+    --palette-4: #305d42;
+    --palette-5: #4d8061;
+    --palette-6: #89a257;
+    --palette-7: #bedc7f;
+    --palette-8: #eeffcc;
+}
+
+:root[data-theme="eulbink"],
+.theme-eulbink {
+    --palette-1: #201533;
+    --palette-2: #252446;
+    --palette-3: #203562;
+    --palette-4: #1e579c;
+    --palette-5: #0098db;
+    --palette-6: #0ce6f2;
+    --palette-7: #0ce6f2;
+    --palette-8: #ffffff;
+}
+
+:root[data-theme="lava-gb"],
+.theme-lava-gb {
+    --palette-1: #051f39;
+    --palette-2: #4a2480;
+    --palette-3: #4a2480;
+    --palette-4: #c53a9d;
+    --palette-5: #c53a9d;
+    --palette-6: #ff8e80;
+    --palette-7: #ff8e80;
+    --palette-8: #ff8e80;
+}
+
+:root[data-theme="curiosities"],
+.theme-curiosities {
+    --palette-1: #46425e;
+    --palette-2: #15788c;
+    --palette-3: #00b9be;
+    --palette-4: #ffeecc;
+    --palette-5: #ffb0a3;
+    --palette-6: #ffb0a3;
+    --palette-7: #ff6973;
+    --palette-8: #ffeecc;
+}
+
+:root[data-theme="demichrome"],
+.theme-demichrome {
+    --palette-1: #211e20;
+    --palette-2: #555568;
+    --palette-3: #555568;
+    --palette-4: #a0a08b;
+    --palette-5: #a0a08b;
+    --palette-6: #e9efec;
+    --palette-7: #e9efec;
+    --palette-8: #e9efec;
+}
+
+:root[data-theme="parchment"],
+.theme-parchment {
+    --palette-1: #292418;
+    --palette-2: #524839;
+    --palette-3: #73654a;
+    --palette-4: #8b7d62;
+    --palette-5: #a48d6a;
+    --palette-6: #bda583;
+    --palette-7: #cdba94;
+    --palette-8: #e6ceac;
+}
+
+:root[data-theme="hollow"],
+.theme-hollow {
+    --palette-1: #0f0f1b;
+    --palette-2: #565a75;
+    --palette-3: #565a75;
+    --palette-4: #c6b7be;
+    --palette-5: #c6b7be;
+    --palette-6: #fafbf6;
+    --palette-7: #fafbf6;
+    --palette-8: #fafbf6;
+}
+
+:root[data-theme="inkpink"],
+.theme-inkpink {
+    --palette-1: #260d34;
+    --palette-2: #452459;
+    --palette-3: #87286a;
+    --palette-4: #d03791;
+    --palette-5: #fe6c90;
+    --palette-6: #fe6c90;
+    --palette-7: #fe6c90;
+    --palette-8: #ffffff;
+}
+
+:root[data-theme="rustic-gb"],
+.theme-rustic-gb {
+    --palette-1: #2c2137;
+    --palette-2: #764462;
+    --palette-3: #764462;
+    --palette-4: #a96868;
+    --palette-5: #a96868;
+    --palette-6: #edb4a1;
+    --palette-7: #edb4a1;
+    --palette-8: #edb4a1;
+}
+
+:root[data-theme="cherrymelon"],
+.theme-cherrymelon {
+    --palette-1: #012824;
+    --palette-2: #265935;
+    --palette-3: #265935;
+    --palette-4: #ff4d6d;
+    --palette-5: #ff4d6d;
+    --palette-6: #fcdeea;
+    --palette-7: #ff4d6d;
+    --palette-8: #fcdeea;
+}
+
+:root[data-theme="neon-nightsky"],
+.theme-neon-nightsky {
+    --palette-1: #131626;
+    --palette-2: #4d4d80;
+    --palette-3: #4d4d80;
+    --palette-4: #e6a1cf;
+    --palette-5: #e6a1cf;
+    --palette-6: #ffe6ea;
+    --palette-7: #ffe6ea;
+    --palette-8: #ffe6ea;
+}
+
+/*
+   VARIÁVEIS SEMÂNTICAS
+   A interface pede a função da cor, não uma cor específica. Ao trocar o tema,
+   as funções continuam iguais e somente os valores da paleta mudam.
+*/
+:root {
+    --ui-background: var(--palette-1);
+    --ui-surface: var(--palette-2);
+    --ui-surface-raised: var(--palette-3);
+    --ui-border: var(--palette-4);
+    --ui-muted: var(--palette-6);
+    --ui-accent: var(--palette-7);
+    --ui-text: var(--palette-8);
+    --ui-shadow: var(--palette-1);
+}

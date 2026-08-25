@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="ammo-8">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="AFA Z — tarefas, estudo e diário de progresso.">
+
+    {# As páginas filhas substituem apenas o conteúdo deste bloco. #}
+    <title>{% block title %}AFA Z{% endblock %}</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/themes.css', v='2.1') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css', v='2.1') }}">
+
+    {#
+       Este script pequeno fica no <head> para aplicar o tema antes de a tela
+       aparecer. Se esperássemos app.js, o tema padrão poderia piscar primeiro.
+    #}
+    <script>
+        try {
+            const savedTheme = localStorage.getItem("afa-z-theme");
+            if (savedTheme) document.documentElement.dataset.theme = savedTheme;
+        } catch (error) {
+            console.info("O tema padrão será usado.");
+        }
+    </script>
+</head>
+<body class="{% block body_class %}{% endblock %}">
+    {# A sessão decide se mostramos a barra do app ou apenas a tela de acesso. #}
+    {% if session.get("usuario_id") %}
+        <header class="topbar">
+            <a class="app-brand" href="{{ url_for('dashboard') }}">AFA Z<span class="cursor" aria-hidden="true">_</span></a>
+
+            <nav class="topbar-actions" aria-label="Ações da conta">
+                <span class="user-name">{{ session.get("usuario_nome") }}</span>
+                <button class="toolbar-button" type="button" data-open-theme>Temas</button>
+                <a class="toolbar-button" href="{{ url_for('logout') }}">Sair</a>
+            </nav>
+        </header>
+    {% else %}
+        <button class="floating-theme-button" type="button" data-open-theme>Temas</button>
+    {% endif %}
+
+    {# Cada template que usa {% extends "base.html" %} entra neste bloco. #}
+    <main class="{% if session.get('usuario_id') %}app-shell{% else %}auth-shell{% endif %}">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="statusbar">
+        <p><span aria-hidden="true">&gt;</span> um passo por vez<span class="cursor" aria-hidden="true">_</span></p>
+    </footer>
+
+    {# Uma única janela de temas é compartilhada por todas as páginas. #}
+    <dialog class="window theme-window" id="theme-window" aria-labelledby="theme-window-title">
+        <div class="window-titlebar">
+            <span id="theme-window-title">Temas</span>
+            <button class="window-control" type="button" data-close-dialog aria-label="Fechar">×</button>
+        </div>
+
+        <div class="theme-window-content">
+            <div class="theme-grid">
+                {# A lista gera os 11 botões sem repetir manualmente o HTML. #}
+                {% for theme_id, theme_name in [
+                    ('ammo-8', 'AMMO-8'),
+                    ('eulbink', 'Eulbink'),
+                    ('lava-gb', 'Lava-GB'),
+                    ('curiosities', 'Curiosities'),
+                    ('demichrome', '2bit Demichrome'),
+                    ('parchment', 'JustParchment8'),
+                    ('hollow', 'Hollow'),
+                    ('inkpink', 'Inkpink'),
+                    ('rustic-gb', 'Rustic GB'),
+                    ('cherrymelon', 'Cherrymelon'),
+                    ('neon-nightsky', 'Neon Nightsky')
+                ] %}
+                    <button class="theme-option theme-{{ theme_id }}" type="button" data-theme-option="{{ theme_id }}">
+                        <span class="theme-preview" aria-hidden="true"></span>
+                        <span>{{ theme_name }}</span>
+                    </button>
+                {% endfor %}
+            </div>
+        </div>
+    </dialog>
+
+    <script src="{{ url_for('static', filename='js/app.js', v='2.1') }}" defer></script>
+</body>
+</html>

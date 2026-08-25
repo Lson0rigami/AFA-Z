@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block title %}Registrar aprendizado | AFA Z{% endblock %}
+{% block body_class %}app-page feedback-page{% endblock %}
+
+{% block content %}
+{# O POST volta para a mesma rota e app.py decide entre INSERT e UPDATE. #}
+<section class="window feedback-window">
+    <div class="window-titlebar">
+        <span>Registro de conclusão</span>
+        <span class="window-indicator" aria-hidden="true"></span>
+    </div>
+
+    <div class="feedback-content">
+        <h1>{{ tarefa["titulo"] }}</h1>
+
+        <form class="form-grid" method="POST">
+            <div class="field-group">
+                <label for="aprendeu">O que você aprendeu?</label>
+                {# Se já existe feedback, o valor anterior preenche o textarea. #}
+                <textarea id="aprendeu" name="aprendeu" rows="5">{{ feedback_existente["aprendeu"] if feedback_existente else "" }}</textarea>
+            </div>
+
+            <div class="field-group">
+                <label for="nao_aprendeu">O que precisa ser revisado?</label>
+                <textarea id="nao_aprendeu" name="nao_aprendeu" rows="5">{{ feedback_existente["nao_aprendeu"] if feedback_existente else "" }}</textarea>
+            </div>
+
+            <div class="dialog-actions">
+                <a class="button" href="{{ url_for('dashboard', categoria=tarefa['categoria_id']) }}">Agora não</a>
+                <button class="button button-primary" type="submit">Salvar</button>
+            </div>
+        </form>
+    </div>
+</section>
+{% endblock %}

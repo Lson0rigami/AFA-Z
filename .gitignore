@@ -1,0 +1,25 @@
+# Ambiente virtual: cada computador cria o seu.
+venv/
+.venv/
+
+# Banco local: pode conter usuários, hashes, tarefas e feedbacks pessoais.
+database.db
+*.db-journal
+*.db-shm
+*.db-wal
+
+# Segredos e configurações locais.
+.env
+.env.*
+!.env.example
+
+# Arquivos gerados pelo Python.
+__pycache__/
+*.py[cod]
+
+# Editores e sistemas operacionais.
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+desktop.ini

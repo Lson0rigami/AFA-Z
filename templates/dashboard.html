@@ -1,0 +1,169 @@
+{% extends "base.html" %}
+
+{% block title %}Painel | AFA Z{% endblock %}
+{% block body_class %}app-page{% endblock %}
+
+{% block content %}
+{#
+   O painel é uma grade com três janelas. O CSS muda essa grade para duas ou
+   uma coluna em telas menores, sem alterar este HTML.
+#}
+<div class="workspace">
+    {# JANELA 1: categorias pertencentes ao usuário logado. #}
+    <aside class="window categories-window">
+        <div class="window-titlebar">
+            <span>Categorias</span>
+            <button class="window-control" type="button" data-dialog-target="new-category" aria-label="Nova categoria">+</button>
+        </div>
+
+        <div class="window-content category-list">
+            {# for/else mostra o texto do else apenas quando a lista está vazia. #}
+            {% for categoria in categorias %}
+                <a class="category-item {% if categoria_ativa and categoria['id'] == categoria_ativa['id'] %}is-active{% endif %}"
+                   href="{{ url_for('dashboard', categoria=categoria['id']) }}">
+                    <span class="category-dot" aria-hidden="true"></span>
+                    <span>{{ categoria["nome"] }}</span>
+                </a>
+            {% else %}
+                <p class="compact-empty">Nenhuma categoria.</p>
+            {% endfor %}
+        </div>
+
+        <div class="window-status">{{ categorias|length }} categoria(s)</div>
+    </aside>
+
+    {# JANELA 2: tarefas da categoria_ativa calculada no app.py. #}
+    <section class="window tasks-window">
+        <div class="window-titlebar">
+            <span>{% if categoria_ativa %}{{ categoria_ativa["nome"] }}{% else %}Tarefas{% endif %}</span>
+            {% if categoria_ativa %}
+                <button class="window-control" type="button" data-dialog-target="new-task" aria-label="Nova tarefa">+</button>
+            {% endif %}
+        </div>
+
+        <div class="window-content task-list">
+            {% if categoria_ativa %}
+                {% for tarefa in tarefas %}
+                    <article class="task-row {% if tarefa['status'] == 'feito' %}is-done{% endif %}">
+                        {% if tarefa["status"] == "pendente" %}
+                            {# Concluir altera dados, por isso usamos POST e não um link GET. #}
+                            <form method="POST" action="{{ url_for('concluir_tarefa', tarefa_id=tarefa['id']) }}">
+                                <button class="task-toggle" type="submit" aria-label="Concluir {{ tarefa['titulo'] }}"></button>
+                            </form>
+                        {% else %}
+                            <span class="task-toggle checked" aria-label="Tarefa concluída">✓</span>
+                        {% endif %}
+
+                        <div class="task-copy">
+                            <strong>{{ tarefa["titulo"] }}</strong>
+                            {% if tarefa["descricao"] %}
+                                <p>{{ tarefa["descricao"] }}</p>
+                            {% endif %}
+                        </div>
+                    </article>
+                {% else %}
+                    <p class="compact-empty">Nenhuma tarefa nesta categoria.</p>
+                {% endfor %}
+            {% else %}
+                <p class="compact-empty">Crie uma categoria para começar.</p>
+            {% endif %}
+        </div>
+
+        <div class="window-status">
+            {% if categoria_ativa %}{{ tarefas|length }} tarefa(s){% else %}—{% endif %}
+        </div>
+    </section>
+
+    {# JANELA 3: resumo e feedbacks das tarefas concluídas hoje. #}
+    <aside class="window today-window">
+        <div class="window-titlebar">
+            <span>Hoje</span>
+            <time class="titlebar-time" data-current-time>--:--</time>
+        </div>
+
+        <div class="window-content today-content">
+            <time class="today-date" data-current-date></time>
+
+            <div class="day-stats">
+                <div>
+                    <strong>{{ diario_hoje|length }}</strong>
+                    <span>concluídas</span>
+                </div>
+                <div>
+                    <strong>{{ total_pendentes }}</strong>
+                    <span>pendentes</span>
+                </div>
+            </div>
+
+            <div class="journal">
+                {% for registro in diario_hoje %}
+                    <article class="journal-entry">
+                        <span class="journal-marker" aria-hidden="true"></span>
+                        <div>
+                            <small>{{ registro["categoria_nome"] }}</small>
+                            <strong>{{ registro["titulo"] }}</strong>
+
+                            {% if registro["aprendeu"] %}
+                                <p><span>Aprendi:</span> {{ registro["aprendeu"] }}</p>
+                            {% endif %}
+                            {% if registro["nao_aprendeu"] %}
+                                <p><span>Revisar:</span> {{ registro["nao_aprendeu"] }}</p>
+                            {% endif %}
+                        </div>
+                    </article>
+                {% else %}
+                    <p class="compact-empty">Nada registrado hoje.</p>
+                {% endfor %}
+            </div>
+
+            <span class="hollow-reference" aria-hidden="true">⋔</span>
+        </div>
+    </aside>
+</div>
+
+{#
+   Os dialogs começam fechados. app.js procura data-dialog-target e chama
+   showModal(); os botões data-close-dialog fecham a janela correspondente.
+#}
+<dialog class="window modal-window" id="new-category" aria-labelledby="new-category-title">
+    <div class="window-titlebar">
+        <span id="new-category-title">Nova categoria</span>
+        <button class="window-control" type="button" data-close-dialog aria-label="Fechar">×</button>
+    </div>
+    <form class="form-grid modal-form" method="POST" action="{{ url_for('nova_categoria') }}">
+        <div class="field-group">
+            <label for="nome_categoria">Nome</label>
+            <input id="nome_categoria" type="text" name="nome_categoria" autocomplete="off" required autofocus>
+        </div>
+        <div class="dialog-actions">
+            <button class="button" type="button" data-close-dialog>Cancelar</button>
+            <button class="button button-primary" type="submit">Criar</button>
+        </div>
+    </form>
+</dialog>
+
+{# Só é possível criar tarefa quando existe uma categoria selecionada. #}
+{% if categoria_ativa %}
+<dialog class="window modal-window" id="new-task" aria-labelledby="new-task-title">
+    <div class="window-titlebar">
+        <span id="new-task-title">Nova tarefa</span>
+        <button class="window-control" type="button" data-close-dialog aria-label="Fechar">×</button>
+    </div>
+    <form class="form-grid modal-form" method="POST" action="{{ url_for('nova_tarefa') }}">
+        <input type="hidden" name="categoria_id" value="{{ categoria_ativa['id'] }}">
+        <div class="field-group">
+            <label for="titulo">Título</label>
+            <input id="titulo" type="text" name="titulo" autocomplete="off" required autofocus>
+        </div>
+        <div class="field-group">
+            <label for="descricao">Descrição <span>(opcional)</span></label>
+            <textarea id="descricao" name="descricao" rows="4"></textarea>
+        </div>
+        <div class="dialog-actions">
+            <button class="button" type="button" data-close-dialog>Cancelar</button>
+            <button class="button button-primary" type="submit">Adicionar</button>
+        </div>
+    </form>
+</dialog>
+{% endif %}
+{% endblock %}

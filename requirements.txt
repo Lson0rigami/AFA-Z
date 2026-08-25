@@ -1,0 +1,7 @@
+# Dependências importadas diretamente pelo projeto.
+#
+# As bibliotecas internas dessas dependências serão instaladas pelo pip
+# automaticamente. Manter esta lista curta deixa claro o que o AFA Z usa.
+Flask==3.1.1
+python-dotenv==1.1.0
+Werkzeug==3.1.8

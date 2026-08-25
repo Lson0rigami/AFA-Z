@@ -1,0 +1,847 @@
+@font-face {
+    font-family: "AFA Z Minecraft";
+    src: url("../fonts/Minecraft.otf") format("opentype");
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "AFA Z Minecraft";
+    src: url("../fonts/Minecraft-Bold.otf") format("opentype");
+    font-style: normal;
+    font-weight: 700;
+    font-display: swap;
+}
+
+/* -------------------------------------------------------------------------
+   CONFIGURAÇÃO GLOBAL
+   ------------------------------------------------------------------------- */
+
+:root {
+    --font-interface: "AFA Z Minecraft", ui-sans-serif, system-ui, sans-serif;
+    --font-pixel: "AFA Z Minecraft", monospace;
+    --font-terminal: "AFA Z Minecraft", monospace;
+    --topbar-height: 52px;
+    --statusbar-height: 29px;
+    --window-border: 2px solid var(--ui-border);
+    --window-shadow: 4px 4px 0 var(--ui-shadow);
+}
+
+* {
+    box-sizing: border-box;
+}
+
+html {
+    min-height: 100%;
+    background: var(--ui-background);
+    color-scheme: dark;
+}
+
+body {
+    min-height: 100vh;
+    margin: 0;
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr) auto;
+    overflow: hidden;
+    background: var(--ui-background);
+    color: var(--ui-text);
+    font-family: var(--font-interface);
+    font-size: 15px;
+}
+
+body.auth-page {
+    grid-template-rows: minmax(0, 1fr) auto;
+}
+
+button,
+input,
+textarea {
+    font: inherit;
+}
+
+button,
+a {
+    -webkit-tap-highlight-color: transparent;
+}
+
+a {
+    color: var(--ui-accent);
+}
+
+button {
+    color: inherit;
+}
+
+/* -------------------------------------------------------------------------
+   BARRA SUPERIOR, ÁREA DO APP E BARRA DE STATUS
+   ------------------------------------------------------------------------- */
+
+.topbar {
+    min-height: var(--topbar-height);
+    border-bottom: var(--window-border);
+    padding: 0 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    background: var(--ui-surface);
+}
+
+.app-brand {
+    color: var(--ui-text);
+    font-family: var(--font-pixel);
+    font-size: 13px;
+    text-decoration: none;
+}
+
+.topbar-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.user-name {
+    max-width: 220px;
+    margin-right: 4px;
+    overflow: hidden;
+    color: var(--ui-muted);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.toolbar-button,
+.floating-theme-button {
+    border: 1px solid var(--ui-border);
+    padding: 6px 10px;
+    background: var(--ui-surface-raised);
+    color: var(--ui-text);
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.toolbar-button:hover,
+.floating-theme-button:hover {
+    background: var(--ui-border);
+}
+
+.floating-theme-button {
+    position: fixed;
+    top: 14px;
+    right: 14px;
+    z-index: 5;
+}
+
+.app-shell {
+    min-height: 0;
+    padding: 12px;
+}
+
+.auth-shell {
+    min-height: 0;
+    padding: 32px 16px;
+    display: grid;
+    place-items: center;
+}
+
+.statusbar {
+    min-height: var(--statusbar-height);
+    border-top: 1px solid var(--ui-border);
+    display: grid;
+    place-items: center;
+    background: var(--ui-surface);
+    color: var(--ui-muted);
+    font-family: var(--font-terminal);
+    font-size: 18px;
+}
+
+.statusbar p {
+    margin: 0;
+}
+
+.cursor {
+    color: var(--ui-accent);
+    animation: blink 1s steps(1) infinite;
+}
+
+/* -------------------------------------------------------------------------
+   SISTEMA VISUAL DE JANELAS
+   ------------------------------------------------------------------------- */
+
+.workspace {
+    width: 100%;
+    height: 100%;
+    display: grid;
+    grid-template-columns: 230px minmax(360px, 1fr) minmax(300px, 380px);
+    gap: 12px;
+}
+
+.window {
+    min-width: 0;
+    min-height: 0;
+    border: var(--window-border);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    background: var(--ui-surface);
+    box-shadow: var(--window-shadow);
+}
+
+/*
+   A classe .window usa flex, mas um <dialog> fechado precisa permanecer
+   invisível. Sem esta regra, o display:flex vence o estilo nativo do navegador.
+*/
+dialog.window:not([open]) {
+    display: none;
+}
+
+dialog.window[open] {
+    display: flex;
+}
+
+/* A barra de título é visualmente retrô, mas os controles são HTML normal. */
+.window-titlebar {
+    min-height: 37px;
+    border-bottom: var(--window-border);
+    padding: 5px 7px 5px 11px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    background: var(--ui-surface-raised);
+    color: var(--ui-text);
+    font-family: var(--font-terminal);
+    font-size: 16px;
+    line-height: 1;
+}
+
+.window-titlebar > span:first-child {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.window-control {
+    width: 25px;
+    height: 25px;
+    flex: 0 0 25px;
+    border: 1px solid var(--ui-border);
+    padding: 0;
+    display: grid;
+    place-items: center;
+    background: var(--ui-surface);
+    color: var(--ui-text);
+    cursor: pointer;
+    font-family: var(--font-interface);
+    font-size: 18px;
+    line-height: 1;
+}
+
+.window-control:hover {
+    background: var(--ui-accent);
+    color: var(--ui-background);
+}
+
+.window-indicator {
+    width: 9px;
+    height: 9px;
+    flex: 0 0 9px;
+    background: var(--ui-accent);
+}
+
+.window-content {
+    min-height: 0;
+    padding: 10px;
+    flex: 1;
+    overflow: auto;
+}
+
+.window-status {
+    min-height: 27px;
+    border-top: 1px solid var(--ui-border);
+    padding: 5px 9px;
+    color: var(--ui-muted);
+    font-family: var(--font-terminal);
+    font-size: 13px;
+    line-height: 1;
+}
+
+/* -------------------------------------------------------------------------
+   JANELAS DE CATEGORIAS E TAREFAS
+   ------------------------------------------------------------------------- */
+
+.category-list {
+    padding: 7px;
+}
+
+.category-item {
+    min-height: 38px;
+    padding: 8px;
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    color: var(--ui-text);
+    text-decoration: none;
+}
+
+.category-item:hover {
+    background: var(--ui-surface-raised);
+}
+
+.category-item.is-active {
+    background: var(--ui-border);
+    color: var(--ui-text);
+}
+
+.category-dot {
+    width: 8px;
+    height: 8px;
+    flex: 0 0 8px;
+    border: 1px solid var(--ui-accent);
+}
+
+.category-item.is-active .category-dot {
+    background: var(--ui-accent);
+}
+
+.task-list {
+    padding: 0;
+}
+
+.task-row {
+    min-height: 56px;
+    border-bottom: 1px solid var(--ui-border);
+    padding: 10px 12px;
+    display: grid;
+    grid-template-columns: 24px minmax(0, 1fr);
+    align-items: start;
+    gap: 11px;
+}
+
+.task-row:hover {
+    background: var(--ui-surface-raised);
+}
+
+.task-row.is-done {
+    color: var(--ui-muted);
+}
+
+.task-row.is-done .task-copy strong {
+    text-decoration: line-through;
+    text-decoration-thickness: 1px;
+}
+
+.task-toggle {
+    width: 20px;
+    height: 20px;
+    border: 2px solid var(--ui-border);
+    padding: 0;
+    display: grid;
+    place-items: center;
+    background: var(--ui-background);
+    color: var(--ui-background);
+    cursor: pointer;
+    line-height: 1;
+}
+
+button.task-toggle:hover {
+    border-color: var(--ui-accent);
+}
+
+.task-toggle.checked {
+    background: var(--ui-accent);
+    color: var(--ui-background);
+    font-size: 13px;
+}
+
+.task-copy {
+    min-width: 0;
+}
+
+.task-copy strong {
+    display: block;
+    overflow-wrap: anywhere;
+    font-size: 14px;
+    line-height: 1.35;
+}
+
+.task-copy p {
+    margin: 4px 0 0;
+    color: var(--ui-muted);
+    font-size: 13px;
+    line-height: 1.4;
+}
+
+.compact-empty {
+    margin: 0;
+    padding: 18px 12px;
+    color: var(--ui-muted);
+    font-size: 14px;
+}
+
+/* -------------------------------------------------------------------------
+   JANELA "HOJE" E DIÁRIO AUTOMÁTICO
+   ------------------------------------------------------------------------- */
+
+.titlebar-time {
+    color: var(--ui-muted);
+    font-size: 13px;
+}
+
+.today-content {
+    padding: 16px;
+}
+
+.today-date {
+    display: block;
+    color: var(--ui-text);
+    font-family: var(--font-terminal);
+    font-size: 18px;
+    line-height: 1.1;
+    text-transform: capitalize;
+}
+
+.day-stats {
+    margin: 14px 0 18px;
+    border: 1px solid var(--ui-border);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+}
+
+.day-stats > div {
+    padding: 11px;
+    display: grid;
+    gap: 2px;
+}
+
+.day-stats > div + div {
+    border-left: 1px solid var(--ui-border);
+}
+
+.day-stats strong {
+    color: var(--ui-accent);
+    font-family: var(--font-terminal);
+    font-size: 22px;
+    line-height: 1;
+}
+
+.day-stats span {
+    color: var(--ui-muted);
+    font-size: 12px;
+}
+
+.journal {
+    display: grid;
+    gap: 2px;
+}
+
+.journal-entry {
+    position: relative;
+    padding: 10px 0 13px 18px;
+    display: grid;
+    grid-template-columns: 1fr;
+}
+
+.journal-entry::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 4px;
+    width: 1px;
+    background: var(--ui-border);
+}
+
+.journal-marker {
+    position: absolute;
+    top: 15px;
+    left: 0;
+    width: 9px;
+    height: 9px;
+    border: 2px solid var(--ui-accent);
+    background: var(--ui-surface);
+}
+
+.journal-entry small {
+    display: block;
+    margin-bottom: 3px;
+    color: var(--ui-muted);
+}
+
+.journal-entry strong {
+    display: block;
+    margin-bottom: 6px;
+}
+
+.journal-entry p {
+    margin: 3px 0 0;
+    color: var(--ui-muted);
+    font-size: 13px;
+    line-height: 1.4;
+}
+
+.journal-entry p span {
+    color: var(--ui-text);
+}
+
+.hollow-reference {
+    display: none;
+}
+
+:root[data-theme="hollow"] .hollow-reference {
+    position: absolute;
+    right: 12px;
+    bottom: 8px;
+    display: block;
+    color: var(--ui-muted);
+    font-size: 22px;
+    opacity: 0.5;
+}
+
+.today-window .window-content {
+    position: relative;
+}
+
+/* -------------------------------------------------------------------------
+   LOGIN, CADASTRO E FORMULÁRIOS
+   ------------------------------------------------------------------------- */
+
+.auth-window {
+    width: min(100%, 410px);
+}
+
+.auth-window-wide {
+    width: min(100%, 460px);
+}
+
+.auth-content,
+.feedback-content {
+    padding: 28px;
+}
+
+.auth-logo {
+    margin: 2px 0 28px;
+    color: var(--ui-text);
+    font-family: var(--font-pixel);
+    font-size: 22px;
+    line-height: 1.5;
+    text-align: center;
+}
+
+.form-grid {
+    display: grid;
+    gap: 16px;
+}
+
+.field-group {
+    display: grid;
+    gap: 6px;
+}
+
+.field-group label {
+    color: var(--ui-text);
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.field-group label span {
+    color: var(--ui-muted);
+    font-weight: 400;
+}
+
+input,
+textarea {
+    width: 100%;
+    border: 1px solid var(--ui-border);
+    border-radius: 0;
+    outline: 0;
+    background: var(--ui-background);
+    color: var(--ui-text);
+    caret-color: var(--ui-accent);
+}
+
+input {
+    height: 40px;
+    padding: 8px 10px;
+}
+
+textarea {
+    min-height: 90px;
+    padding: 10px;
+    resize: vertical;
+}
+
+input::placeholder,
+textarea::placeholder {
+    color: var(--ui-muted);
+    opacity: 0.72;
+}
+
+input:focus,
+textarea:focus {
+    border-color: var(--ui-accent);
+    box-shadow: 2px 2px 0 var(--ui-border);
+}
+
+.button {
+    min-height: 38px;
+    border: 1px solid var(--ui-border);
+    padding: 8px 14px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--ui-surface-raised);
+    color: var(--ui-text);
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.button:hover {
+    background: var(--ui-border);
+}
+
+.button-primary {
+    border-color: var(--ui-accent);
+    background: var(--ui-accent);
+    color: var(--ui-background);
+    font-weight: 700;
+}
+
+.button-primary:hover {
+    background: var(--ui-text);
+    color: var(--ui-background);
+}
+
+.auth-link {
+    margin-top: 18px;
+    display: block;
+    color: var(--ui-muted);
+    font-size: 13px;
+    text-align: center;
+}
+
+.form-error {
+    border-left: 3px solid var(--ui-accent);
+    margin: 0 0 18px;
+    padding: 8px 10px;
+    background: var(--ui-surface-raised);
+    color: var(--ui-text);
+    font-size: 13px;
+}
+
+.feedback-window {
+    width: min(100%, 650px);
+    max-height: 100%;
+    margin: auto;
+}
+
+.feedback-content {
+    overflow: auto;
+}
+
+.feedback-content h1 {
+    margin: 0 0 22px;
+    color: var(--ui-text);
+    font-size: 19px;
+    line-height: 1.35;
+}
+
+.dialog-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+}
+
+/* -------------------------------------------------------------------------
+   DIÁLOGOS: NOVA TAREFA, NOVA CATEGORIA E TEMAS
+   ------------------------------------------------------------------------- */
+
+dialog.window {
+    width: min(calc(100% - 28px), 480px);
+    max-height: min(calc(100% - 28px), 720px);
+    margin: auto;
+    padding: 0;
+    color: var(--ui-text);
+}
+
+dialog.window::backdrop {
+    background: var(--ui-background);
+    opacity: 0.78;
+}
+
+.modal-form {
+    padding: 20px;
+    overflow: auto;
+}
+
+.theme-window {
+    width: min(calc(100% - 28px), 760px) !important;
+}
+
+.theme-window-content {
+    padding: 12px;
+    overflow: auto;
+}
+
+.theme-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+}
+
+.theme-option {
+    min-width: 0;
+    border: 1px solid var(--ui-border);
+    padding: 8px;
+    display: grid;
+    gap: 7px;
+    background: var(--ui-background);
+    color: var(--ui-text);
+    cursor: pointer;
+    text-align: left;
+}
+
+.theme-option:hover,
+.theme-option[aria-pressed="true"] {
+    border-color: var(--ui-accent);
+    background: var(--ui-surface-raised);
+}
+
+.theme-preview {
+    height: 23px;
+    border: 1px solid var(--ui-border);
+    background: linear-gradient(
+        90deg,
+        var(--palette-1) 0 12.5%,
+        var(--palette-2) 12.5% 25%,
+        var(--palette-3) 25% 37.5%,
+        var(--palette-4) 37.5% 50%,
+        var(--palette-5) 50% 62.5%,
+        var(--palette-6) 62.5% 75%,
+        var(--palette-7) 75% 87.5%,
+        var(--palette-8) 87.5% 100%
+    );
+}
+
+.theme-option > span:last-child {
+    overflow: hidden;
+    font-size: 13px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.fallback-window {
+    width: min(100%, 500px);
+    margin: auto;
+}
+
+/* -------------------------------------------------------------------------
+   RESPONSIVIDADE E ACESSIBILIDADE
+   ------------------------------------------------------------------------- */
+
+:focus-visible {
+    outline: 2px solid var(--ui-accent);
+    outline-offset: 2px;
+}
+
+@keyframes blink {
+    50% {
+        opacity: 0;
+    }
+}
+
+@media (max-width: 1050px) {
+    body {
+        overflow: auto;
+    }
+
+    .app-shell {
+        min-height: calc(100vh - var(--topbar-height) - var(--statusbar-height));
+    }
+
+    .workspace {
+        height: auto;
+        grid-template-columns: 220px minmax(0, 1fr);
+        align-items: start;
+    }
+
+    .categories-window,
+    .tasks-window {
+        min-height: 520px;
+        max-height: calc(100vh - 105px);
+    }
+
+    .today-window {
+        min-height: 340px;
+        grid-column: 1 / -1;
+    }
+}
+
+@media (max-width: 660px) {
+    .topbar {
+        padding: 0 10px;
+    }
+
+    .user-name {
+        display: none;
+    }
+
+    .toolbar-button {
+        padding: 5px 7px;
+        font-size: 13px;
+    }
+
+    .app-shell {
+        padding: 8px;
+    }
+
+    .workspace {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+
+    .categories-window,
+    .tasks-window,
+    .today-window {
+        min-height: 0;
+        max-height: none;
+        grid-column: auto;
+    }
+
+    .categories-window {
+        max-height: 270px;
+    }
+
+    .tasks-window {
+        min-height: 420px;
+    }
+
+    .today-window {
+        min-height: 320px;
+    }
+
+    .theme-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .auth-content,
+    .feedback-content {
+        padding: 22px 18px;
+    }
+
+    .dialog-actions {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important;
+    }
+}

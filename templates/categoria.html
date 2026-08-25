@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{#
+   Template de compatibilidade. Atualmente /categoria/<id> valida o acesso e
+   redireciona para /dashboard?categoria=<id>, então esta tela não é renderizada.
+#}
+{% block title %}{{ categoria["nome"] }} | AFA Z{% endblock %}
+
+{% block content %}
+<section class="window fallback-window">
+    <div class="window-titlebar"><span>{{ categoria["nome"] }}</span></div>
+    <div class="window-content">
+        <a class="button button-primary" href="{{ url_for('dashboard', categoria=categoria['id']) }}">Abrir no painel</a>
+    </div>
+</section>
+{% endblock %}
