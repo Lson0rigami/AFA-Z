@@ -1,6 +1,6 @@
 # Como colaborar no AFA Z
 
-Este guia foi pensado para duas pessoas aprenderem Git e desenvolvimento web
+Este guia foi pensado para pessoas aprenderem Git e desenvolvimento web
 enquanto evoluem o mesmo projeto.
 
 ## Antes de começar
@@ -81,3 +81,9 @@ para reduzir conflitos.
 Não escolham automaticamente “aceitar tudo”. Leiam as duas versões e montem a
 versão final que preserve a intenção de ambas. Depois testem novamente antes do
 commit que resolve o conflito.
+
+#NOTA DO LSON0RIGAMI
+
+O AFA Z foi feito pra fins de estudo.
+
+
