@@ -70,7 +70,11 @@
         </div>
 
         <div class="window-status">
-            {% if categoria_ativa %}{{ tarefas|length }} tarefa(s){% else %}—{% endif %}
+            {% if categoria_ativa %}
+                {{ tarefas_pendentes_categoria }} pendente(s) · {{ tarefas|length }} no total
+            {% else %}
+                —
+            {% endif %}
         </div>
     </section>
 

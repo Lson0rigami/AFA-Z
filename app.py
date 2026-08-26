@@ -161,6 +161,13 @@ def dashboard():
         """, (categoria_ativa["id"],))
         tarefas = cursor.fetchall()
 
+    # Conta apenas as tarefas que ainda não foram concluídas nesta categoria.
+    tarefas_pendentes_categoria = 0
+
+    for tarefa in tarefas:
+        if tarefa["status"] == "pendente":
+            tarefas_pendentes_categoria += 1
+
     # COUNT calcula o número sem precisar trazer todas as tarefas para o Python.
     # O JOIN conecta cada tarefa à categoria e, por ela, ao dono da categoria.
     cursor.execute("""
@@ -209,7 +216,8 @@ def dashboard():
         categoria_ativa=categoria_ativa,
         tarefas=tarefas,
         diario_hoje=diario_hoje,
-        total_pendentes=total_pendentes
+        total_pendentes=total_pendentes,
+        tarefas_pendentes_categoria=tarefas_pendentes_categoria,
     )
 
 
