@@ -19,12 +19,26 @@
         <div class="window-content category-list">
             {# for/else mostra o texto do else apenas quando a lista está vazia. #}
             {% for categoria in categorias %}
-                <a class="category-item {% if categoria_ativa and categoria['id'] == categoria_ativa['id'] %}is-active{% endif %}"
-                   href="{{ url_for('dashboard', categoria=categoria['id']) }}">
-                    <span class="category-dot" aria-hidden="true"></span>
-                    <span>{{ categoria["nome"] }}</span>
-                </a>
-            {% else %}
+    <div class="category-row">
+        <a class="category-item {% if categoria_ativa and categoria['id'] == categoria_ativa['id'] %}is-active{% endif %}"
+           href="{{ url_for('dashboard', categoria=categoria['id']) }}">
+            <span class="category-dot" aria-hidden="true"></span>
+            <span>{{ categoria["nome"] }}</span>
+        </a>
+
+        <form class="inline-form"
+              method="POST"
+              action="{{ url_for('excluir_categoria', categoria_id=categoria['id']) }}"
+              data-delete-form
+              data-delete-message="Excluir a categoria ‘{{ categoria['nome'] }}’? Todas as tarefas e reflexões dela também serão apagadas.">
+
+            <button class="item-delete"
+                    type="submit"
+                    aria-label="Excluir categoria {{ categoria['nome'] }}"
+                    title="Excluir categoria">×</button>
+        </form>
+    </div>
+{% else %}
                 <p class="compact-empty">Nenhuma categoria.</p>
             {% endfor %}
         </div>
@@ -60,6 +74,17 @@
                                 <p>{{ tarefa["descricao"] }}</p>
                             {% endif %}
                         </div>
+                    <form class="inline-form"
+                        method="POST"
+                        action="{{ url_for('excluir_tarefa', tarefa_id=tarefa['id']) }}"
+                        data-delete-form
+                        data-delete-message="Excluir a tarefa ‘{{ tarefa['titulo'] }}’?{% if tarefa['status'] == 'feito' %} A reflexão registrada também será apagada.{% endif %}">
+
+                        <button class="item-delete"
+                        type="submit"
+                        aria-label="Excluir tarefa {{ tarefa['titulo'] }}"
+                        title="Excluir tarefa">×</button>
+                    </form>
                     </article>
                 {% else %}
                     <p class="compact-empty">Nenhuma tarefa nesta categoria.</p>
@@ -70,7 +95,11 @@
         </div>
 
         <div class="window-status">
-            {% if categoria_ativa %}{{ tarefas|length }} tarefa(s){% else %}—{% endif %}
+            {% if categoria_ativa %}
+                {{ tarefas_pendentes_categoria }} pendente(s) · {{ tarefas|length }} no total
+            {% else %}
+                —
+            {% endif %}
         </div>
     </section>
 
@@ -166,4 +195,44 @@
     </form>
 </dialog>
 {% endif %}
+
+<dialog class="window modal-window confirm-window"
+        id="confirm-delete"
+        aria-labelledby="confirm-delete-title"
+        aria-describedby="confirm-delete-message">
+
+    <div class="window-titlebar">
+        <span id="confirm-delete-title">Confirmar exclusão</span>
+
+        <button class="window-control"
+                type="button"
+                data-close-dialog
+                aria-label="Fechar">×</button>
+    </div>
+
+    <div class="confirm-content">
+        <p id="confirm-delete-message">
+            Tem certeza de que deseja excluir este item?
+        </p>
+
+        <p class="confirm-warning">
+            Esta ação não pode ser desfeita.
+        </p>
+
+        <div class="dialog-actions">
+            <button class="button"
+                    type="button"
+                    data-close-dialog>
+                Cancelar
+            </button>
+
+            <button class="button button-danger"
+                    type="button"
+                    data-confirm-delete>
+                Excluir
+            </button>
+        </div>
+    </div>
+</dialog>
+
 {% endblock %}
