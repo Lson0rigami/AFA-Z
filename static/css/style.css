@@ -314,7 +314,7 @@ dialog.window[open] {
     border-bottom: 1px solid var(--ui-border);
     padding: 10px 12px;
     display: grid;
-    grid-template-columns: 24px minmax(0, 1fr);
+    grid-template-columns: 24px minmax(0, 1fr) 28px;
     align-items: start;
     gap: 11px;
 }
@@ -844,4 +844,66 @@ dialog.window::backdrop {
         animation-iteration-count: 1 !important;
         scroll-behavior: auto !important;
     }
+
+.category-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 30px;
+    align-items: center;
+}
+
+.inline-form {
+    margin: 0;
+}
+
+.item-delete {
+    width: 26px;
+    height: 26px;
+    border: 1px solid transparent;
+    padding: 0;
+    display: grid;
+    place-items: center;
+    background: transparent;
+    color: var(--ui-muted);
+    cursor: pointer;
+    font-size: 18px;
+    line-height: 1;
+}
+
+.item-delete:hover {
+    border-color: var(--ui-accent);
+    background: var(--ui-surface-raised);
+    color: var(--ui-text);
+}
+
+.button-danger {
+    border-color: var(--ui-accent);
+    background: var(--ui-surface-raised);
+    color: var(--ui-text);
+    font-weight: 700;
+}
+
+.button-danger:hover {
+    background: var(--ui-accent);
+    color: var(--ui-background);
+}
+
+.confirm-window {
+    width: min(calc(100% - 28px), 510px) !important;
+}
+
+.confirm-content {
+    padding: 20px;
+}
+
+.confirm-content p {
+    margin: 0;
+    line-height: 1.5;
+}
+
+.confirm-warning {
+    margin: 8px 0 22px !important;
+    color: var(--ui-muted);
+    font-size: 13px;
+}
+
 }

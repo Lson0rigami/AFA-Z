@@ -268,6 +268,48 @@ def ver_categoria(categoria_id):
 
     return redirect(url_for("dashboard", categoria=categoria_id))
 
+@app.route("/categoria/<int:categoria_id>/excluir", methods=["POST"])
+def excluir_categoria(categoria_id):
+    """Exclui uma categoria e todo o conteúdo que pertence a ela."""
+    if "usuario_id" not in session:
+        return redirect(url_for("login"))
+
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    # Confirma que a categoria realmente pertence ao usuário logado.
+    cursor.execute(
+        "SELECT id FROM categorias WHERE id = ? AND usuario_id = ?",
+        (categoria_id, session["usuario_id"])
+    )
+
+    if cursor.fetchone() is None:
+        conn.close()
+        return "Categoria não encontrada", 404
+
+    # A exclusão segue a ordem inversa dos relacionamentos:
+    # feedback -> tarefas -> categoria.
+    cursor.execute("""
+        DELETE FROM feedback
+        WHERE tarefa_id IN (
+            SELECT id FROM tarefas WHERE categoria_id = ?
+        )
+    """, (categoria_id,))
+
+    cursor.execute(
+        "DELETE FROM tarefas WHERE categoria_id = ?",
+        (categoria_id,)
+    )
+
+    cursor.execute(
+        "DELETE FROM categorias WHERE id = ? AND usuario_id = ?",
+        (categoria_id, session["usuario_id"])
+    )
+
+    conn.commit()
+    conn.close()
+
+    return redirect(url_for("dashboard"))
 
 # ---------------------------------------------------------------------------
 # TAREFAS E FEEDBACK
@@ -306,6 +348,45 @@ def nova_tarefa():
 
     return redirect(url_for("dashboard", categoria=categoria_id))
 
+@app.route("/tarefa/<int:tarefa_id>/excluir", methods=["POST"])
+def excluir_tarefa(tarefa_id):
+    """Exclui uma tarefa do usuário e qualquer feedback ligado a ela."""
+    if "usuario_id" not in session:
+        return redirect(url_for("login"))
+
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    # O JOIN encontra a categoria e confirma quem é o dono da tarefa.
+    cursor.execute("""
+        SELECT tarefas.categoria_id FROM tarefas
+        JOIN categorias ON tarefas.categoria_id = categorias.id
+        WHERE tarefas.id = ? AND categorias.usuario_id = ?
+    """, (tarefa_id, session["usuario_id"]))
+
+    tarefa = cursor.fetchone()
+
+    if tarefa is None:
+        conn.close()
+        return "Tarefa não encontrada", 404
+
+    # Se a tarefa estiver concluída, ela pode possuir um feedback.
+    cursor.execute(
+        "DELETE FROM feedback WHERE tarefa_id = ?",
+        (tarefa_id,)
+    )
+
+    cursor.execute(
+        "DELETE FROM tarefas WHERE id = ?",
+        (tarefa_id,)
+    )
+
+    conn.commit()
+    conn.close()
+
+    return redirect(
+        url_for("dashboard", categoria=tarefa["categoria_id"])
+    )
 
 @app.route("/tarefa/<int:tarefa_id>/concluir", methods=["POST"])
 def concluir_tarefa(tarefa_id):

@@ -95,6 +95,70 @@ document.querySelectorAll("dialog").forEach((dialog) => {
 });
 
 // ---------------------------------------------------------------------------
+// CONFIRMAÇÃO DE EXCLUSÃO
+// ---------------------------------------------------------------------------
+
+const deleteDialog = document.querySelector("#confirm-delete");
+const deleteMessage = document.querySelector("#confirm-delete-message");
+const confirmDeleteButton = document.querySelector("[data-confirm-delete]");
+
+let pendingDeleteForm = null;
+
+document.querySelectorAll("[data-delete-form]").forEach((form) => {
+    form.addEventListener("submit", (event) => {
+        // Na segunda passagem, a exclusão já foi confirmada.
+        if (form.dataset.deleteConfirmed === "true") {
+            delete form.dataset.deleteConfirmed;
+            return;
+        }
+
+        // Impede que o formulário seja enviado imediatamente.
+        event.preventDefault();
+
+        // Se o dialog estiver ausente, usa a confirmação comum do navegador.
+        if (!deleteDialog || !deleteMessage || !confirmDeleteButton) {
+            if (window.confirm(form.dataset.deleteMessage)) {
+                form.submit();
+            }
+
+            return;
+        }
+
+        // Guarda qual formulário tentou fazer a exclusão.
+        pendingDeleteForm = form;
+
+        // Cada botão possui sua própria mensagem no HTML.
+        deleteMessage.textContent = form.dataset.deleteMessage;
+
+        if (!deleteDialog.open) {
+            deleteDialog.showModal();
+        }
+
+        confirmDeleteButton.focus();
+    });
+});
+
+if (confirmDeleteButton) {
+    confirmDeleteButton.addEventListener("click", () => {
+        if (!pendingDeleteForm) return;
+
+        const formToSubmit = pendingDeleteForm;
+
+        // Marca que esse envio já foi confirmado.
+        formToSubmit.dataset.deleteConfirmed = "true";
+
+        deleteDialog.close();
+        formToSubmit.requestSubmit();
+    });
+}
+
+if (deleteDialog) {
+    deleteDialog.addEventListener("close", () => {
+        pendingDeleteForm = null;
+    });
+}
+
+// ---------------------------------------------------------------------------
 // DATA E RELÓGIO DO PAINEL
 // ---------------------------------------------------------------------------
 

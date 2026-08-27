@@ -82,7 +82,7 @@ Não escolham automaticamente “aceitar tudo”. Leiam as duas versões e monte
 versão final que preserve a intenção de ambas. Depois testem novamente antes do
 commit que resolve o conflito.
 
-#NOTA DO LSON0RIGAMI
+## NOTA DO LSON0RIGAMI
 
 O AFA Z foi feito pra fins de estudo.
 
