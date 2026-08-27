@@ -21,7 +21,8 @@ e decisões que possam ser discutidas por quem está estudando Python e web.
 - interface inspirada em janelas de sistema;
 - 11 paletas selecionáveis;
 - fonte Minecraft incorporada localmente;
-- layout responsivo.
+- layout responsivo;
+- Exclusão de categorias e tarefas.
 
 ## Tecnologias
 
