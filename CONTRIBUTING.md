@@ -85,5 +85,6 @@ commit que resolve o conflito.
 ## NOTA DO LSON0RIGAMI
 
 O AFA Z foi feito pra fins de estudo.
+Sistema vai ficar um tempo "pausado" o processo devido a fins maiores
 
 
