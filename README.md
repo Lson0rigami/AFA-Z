@@ -119,5 +119,3 @@ Os arquivos `Minecraft.otf` e `Minecraft-Bold.otf` são do projeto aberto
 **Minecraft Font**, de Idrees Hassan. A licença OFL acompanha os arquivos em
 `static/fonts/OFL-Minecraft-Font.txt`.
 
-A licença do código do AFA Z ainda deve ser escolhida antes de uma distribuição
-pública definitiva.
